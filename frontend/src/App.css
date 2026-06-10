@@ -1,0 +1,127 @@
+/* ─── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+
+/* ─── CSS Variables — Dark SOC Theme ────────────────────────────────────────── */
+:root {
+  --bg-0: #05080f;
+  --bg-1: #0a0e1a;
+  --bg-2: #0f1525;
+  --bg-card: #111827;
+  --bg-card-hover: #141e30;
+
+  --border: rgba(0, 212, 170, 0.12);
+  --border-strong: rgba(0, 212, 170, 0.35);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+
+  --text-0: #f0f4ff;
+  --text-1: #c8d4e8;
+  --text-2: #7a8aa8;
+  --text-3: #3d4f6e;
+
+  --accent: #00d4aa;
+  --accent-dim: rgba(0, 212, 170, 0.08);
+  --accent-glow: rgba(0, 212, 170, 0.3);
+
+  --critical: #ff4040;
+  --critical-dim: rgba(255, 64, 64, 0.1);
+  --critical-glow: rgba(255, 64, 64, 0.25);
+  --critical-border: rgba(255, 64, 64, 0.4);
+
+  --high: #ff9500;
+  --high-dim: rgba(255, 149, 0, 0.1);
+  --high-border: rgba(255, 149, 0, 0.4);
+
+  --medium: #f5c518;
+  --medium-dim: rgba(245, 197, 24, 0.1);
+  --medium-border: rgba(245, 197, 24, 0.4);
+
+  --low: #3b9eff;
+  --low-dim: rgba(59, 158, 255, 0.1);
+  --low-border: rgba(59, 158, 255, 0.4);
+
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────────── */
+body {
+  background: var(--bg-0);
+  color: var(--text-1);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  /* Subtle grid pattern */
+  background-image:
+    linear-gradient(rgba(0, 212, 170, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 212, 170, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-1); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+/* ─── Animations ─────────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(400px); opacity: 0; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 10px var(--critical-glow), 0 0 20px transparent; }
+  50%       { box-shadow: 0 0 20px var(--critical-glow), 0 0 40px var(--critical-dim); }
+}
+
+@keyframes borderGlow {
+  0%, 100% { border-color: var(--border); }
+  50%       { border-color: var(--border-strong); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ─── Utility ─────────────────────────────────────────────────────────────────── */
+.mono { font-family: var(--font-mono); }
+.display { font-family: var(--font-display); }
+.animate-in { animation: fadeInUp 0.4s ease both; }
+
+/* ─── Severity Color Helpers ─────────────────────────────────────────────────── */
+.sev-critical { color: var(--critical); }
+.sev-high     { color: var(--high); }
+.sev-medium   { color: var(--medium); }
+.sev-low      { color: var(--low); }

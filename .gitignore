@@ -1,0 +1,29 @@
+# Dependencies — never push these (too large, npm install recreates them)
+node_modules/
+*/node_modules/
+
+# Environment files — CRITICAL: never push .env or your API key is exposed
+.env
+.env.local
+.env.production
+backend/.env
+
+
+
+# Build output
+dist/
+build/
+*/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
