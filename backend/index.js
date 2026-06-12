@@ -16,7 +16,7 @@ const IS_DEV = process.env.NODE_ENV !== "production";
 app.use(helmet());
 app.use(
   cors({
-    origin: "*",
+    origin: ALLOWED_ORIGINS,
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "X-API-Key"],
   }),
