@@ -21,9 +21,9 @@ export default function App() {
       const response = await fetch(`${API_URL}/api/analyze`, {
         method: 'POST',
         body: formData,
-        headers: {
-          'X-API-Key': import.meta.env.VITE_APP_API_KEY || ''
-        }
+        // headers: {
+        //   'X-API-Key': import.meta.env.VITE_APP_API_KEY || ''
+        // }
       });
 
       const data = await response.json();

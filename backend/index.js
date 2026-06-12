@@ -18,7 +18,7 @@ app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST"],
-    allowedHeaders: ["Content-Type", 'X-API-Key'],
+    allowedHeaders: ["Content-Type", "X-API-Key"],
   }),
 );
 app.use(express.json());
@@ -59,26 +59,48 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 // ─── API Key Auth Middleware ──────────────────────────────────────────────────
 // Add this AFTER the groq client line and BEFORE your routes
 
-const apiKeyAuth = (req, res, next) => {
-  const clientKey = req.headers["x-api-key"];
+// const apiKeyAuth = (req, res, next) => {
+//   const clientKey = req.headers["x-api-key"];
 
-  if (!clientKey) {
-    console.warn(`[AUTH] Missing X-API-Key from IP: ${req.ip}`);
-    return res.status(401).json({
-      error: "Unauthorized. X-API-Key header is required.",
-      code: "MISSING_API_KEY",
+//   if (!clientKey) {
+//     console.warn(`[AUTH] Missing X-API-Key from IP: ${req.ip}`);
+//     return res.status(401).json({
+//       error: "Unauthorized. X-API-Key header is required.",
+//       code: "MISSING_API_KEY",
+//     });
+//   }
+
+//   if (clientKey !== process.env.APP_API_KEY) {
+//     console.warn(`[AUTH] Invalid X-API-Key attempt from IP: ${req.ip}`);
+//     return res.status(401).json({
+//       error: "Unauthorized. Invalid API key.",
+//       code: "INVALID_API_KEY",
+//     });
+//   }
+
+//   next(); // key is valid — allow request through
+// };
+
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "https://insightguard-ai-threat-detector.vercel.app",
+];
+
+const originAuth = (req, res, next) => {
+  const origin = req.headers.origin || req.headers.referer || "";
+  const allowed = ALLOWED_ORIGINS.some((o) => origin.startsWith(o));
+
+  if (!allowed) {
+    console.warn(
+      `[BLOCKED] Request from unauthorized origin: ${origin} — IP: ${req.ip}`,
+    );
+    return res.status(403).json({
+      error: "Forbidden. Requests must come from an authorized origin.",
+      code: "UNAUTHORIZED_ORIGIN",
     });
   }
 
-  if (clientKey !== process.env.APP_API_KEY) {
-    console.warn(`[AUTH] Invalid X-API-Key attempt from IP: ${req.ip}`);
-    return res.status(401).json({
-      error: "Unauthorized. Invalid API key.",
-      code: "INVALID_API_KEY",
-    });
-  }
-
-  next(); // key is valid — allow request through
+  next();
 };
 
 // ─── Health + Test Endpoints ─────────────────────────────────────────────────
@@ -135,7 +157,7 @@ app.get("/test-api", async (req, res) => {
 
 app.post(
   "/api/analyze",
-  apiKeyAuth,
+  originAuth,
   upload.single("logfile"),
   async (req, res) => {
     // 1. Check API key
