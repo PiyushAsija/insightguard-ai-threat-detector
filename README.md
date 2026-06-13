@@ -399,6 +399,47 @@ No known vulnerable packages were detected in either dependency tree during test
 
 ---
 
+### A07 — Identification & Authentication Failures (Rate Limiting)
+
+#### Test Performed
+
+Used Burp Suite Intruder to repeatedly send requests to:
+
+POST /api/analyze
+
+Attack configuration:
+
+- Attack Type: Sniper
+- Payload Type: Null Payloads
+- Total Requests: 25
+
+#### Result
+
+Initial requests returned:
+
+HTTP 200 OK
+
+After the configured threshold was reached, subsequent requests returned:
+
+HTTP 429 Too Many Requests
+
+Observed during testing:
+
+- Requests 13–16: HTTP 200
+- Requests 17–21: HTTP 429
+
+The lower threshold occurred because previous API requests from the same IP were already counted within the active rate-limit window.
+
+#### Mitigation
+
+Implemented using:
+
+```javascript
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20
+});
+
 ### Security Testing Tools Used
 
 * Chrome DevTools
@@ -406,6 +447,7 @@ No known vulnerable packages were detected in either dependency tree during test
 * Manual OWASP Top 10 Testing
 * Custom CSV Attack Payloads
 * Render Production Logs
+* Burp Suite
 
 ### Overall Security Assessment
 
