@@ -13,13 +13,23 @@ const IS_DEV = process.env.NODE_ENV !== "production";
 
 // ─── Security Middleware ──────────────────────────────────────────────────────
 
-app.use(helmet());
+const ALLOWED_ORIGINS = [
+  "http://localhost:5173",
+  "https://insightguard-ai-threat-detector.vercel.app",
+];
+
 app.use(
   cors({
-    origin: ALLOWED_ORIGINS,
+    origin: function (origin, callback) {
+      if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Origin not allowed"));
+      }
+    },
     methods: ["GET", "POST"],
     allowedHeaders: ["Content-Type", "X-API-Key"],
-  }),
+  })
 );
 app.use(express.json());
 
@@ -81,10 +91,7 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 //   next(); // key is valid — allow request through
 // };
 
-const ALLOWED_ORIGINS = [
-  "http://localhost:5173",
-  "https://insightguard-ai-threat-detector.vercel.app",
-];
+
 
 const originAuth = (req, res, next) => {
   const origin = req.headers.origin || req.headers.referer || "";
