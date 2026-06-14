@@ -1,0 +1,4 @@
+username,timestamp,action,resource,ip_address
+tester,2024-01-15 09:00:00,READ,http://169.254.169.254/metadata,10.0.0.1
+tester,2024-01-15 09:01:00,READ,http://localhost:3001/health,10.0.0.1
+tester,2024-01-15 09:02:00,READ,file:///etc/passwd,10.0.0.1

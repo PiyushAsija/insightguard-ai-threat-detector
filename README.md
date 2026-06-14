@@ -553,6 +553,43 @@ All API requests are recorded with timestamp, source IP address, HTTP method, en
 **Result:** PASS
 
 
+### A10 — Server-Side Request Forgery (SSRF)
+
+**Test:**
+
+Uploaded a CSV containing URL-like resources:
+
+```text
+http://169.254.169.254/metadata
+http://localhost:3001/health
+file:///etc/passwd
+```
+
+**Finding:**
+
+The application did not attempt to fetch, resolve, or access any supplied URLs.
+
+All values were treated as plain log data and forwarded to the AI model for analysis.
+
+**Verification:**
+
+Backend logs showed only the expected API request:
+
+```text
+POST /api/analyze | 200
+```
+
+No outbound HTTP requests were generated.
+
+**Mitigation:**
+
+* User-supplied URLs are treated as data only.
+* No server-side URL fetching functionality exists.
+* No dynamic network requests are performed based on CSV contents.
+
+**Result:** PASS ✅
+
+
 
 ### Security Testing Tools Used
 
@@ -576,5 +613,6 @@ All API requests are recorded with timestamp, source IP address, HTTP method, en
 | A07 Authentication and Rate Limiting Failures    | PASS   |
 | A08 Software and data integrity Failures         | PASS   |
 | A09 Security Logging & Monitoring Failures       | PASS   |
+| A09 Server-Side Request Forgery (SSRF)           | PASS   |
 **Security Score:** 8 / 8 Tests Passed
 
