@@ -440,6 +440,95 @@ const limiter = rateLimit({
   max: 20
 });
 
+
+### A08 — Software and Data Integrity Failures
+
+#### Test 1 — AI Response Schema Validation
+
+Used Burp Suite to intercept the `/api/analyze` response and modified:
+
+```json
+{
+  "risk_level": "HIGH"
+}
+```
+
+to:
+
+```json
+{
+  "risk_level": "FAKE"
+}
+```
+
+#### Result
+
+The frontend continued functioning normally.
+
+Observed behavior:
+
+* Dashboard rendered successfully
+* Statistics remained visible
+* Anomaly cards displayed correctly
+* No React or JavaScript crashes occurred
+
+#### Finding
+
+The application remains operational when unexpected AI-generated values are received.
+
+**Status:** PASS
+
+---
+
+#### Test 2 — Dependency Lock Files
+
+Verified:
+
+```text
+backend/package-lock.json
+frontend/package-lock.json
+```
+
+Both files exist and are committed to version control.
+
+#### Finding
+
+Exact dependency versions are locked, reducing supply-chain attack risk and ensuring reproducible builds.
+
+**Status:** PASS
+
+---
+
+#### Test 3 — Git Configuration Review
+
+Reviewed `.gitignore`.
+
+Verified that:
+
+```text
+package-lock.json
+```
+
+is not excluded from source control.
+
+#### Finding
+
+Dependency lock files are tracked by Git and protected from accidental omission.
+
+**Status:** PASS
+
+---
+
+#### Mitigations
+
+* Dependency version pinning via package-lock.json
+* Source-controlled dependency lock files
+* Frontend resilience against malformed AI responses
+* Manual validation of AI-generated data during testing
+
+**Overall Status:** PASS ✅
+
+
 ### Security Testing Tools Used
 
 * Chrome DevTools
@@ -451,14 +540,16 @@ const limiter = rateLimit({
 
 ### Overall Security Assessment
 
-| Category                      | Status |
-| ----------------------------- | ------ |
-| A01 Broken Access Control     | PASS   |
-| A02 Cryptographic Failures    | PASS   |
-| A03 Injection                 | PASS   |
-| A04 Insecure Design           | PASS   |
-| A05 Security Misconfiguration | PASS   |
-| A06 Vulnerable Components     | PASS   |
+| Category                                         | Status |
+| -------------------------------------------------| ------ |
+| A01 Broken Access Control                        | PASS   |
+| A02 Cryptographic Failures                       | PASS   |
+| A03 Injection - Prompt injection attack          | PASS   |
+| A04 Insecure Design -file upload abuse           | PASS   |
+| A05 Security Misconfiguration                    | PASS   |
+| A06 Vulnerable and outdated Components           | PASS   |
+| A07 Authentication and Rate Limiting Failures    | PASS   |
+| A08 Software and data integrity Failures         | PASS   |
 
-**Security Score:** 6 / 6 Tests Passed
+**Security Score:** 8 / 8 Tests Passed
 
