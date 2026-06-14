@@ -365,39 +365,34 @@ No 'Access-Control-Allow-Origin' header is present
 
 ---
 
-### A06 — Vulnerable and Outdated Components
+### A06 — Vulnerable & Outdated Components
 
-#### Backend Audit
+**Test:**
+Executed dependency scans using npm's built-in vulnerability scanner:
 
 ```bash
+cd backend
+npm audit
+
+cd ../frontend
 npm audit
 ```
 
-Result:
+**Finding:**
+No known vulnerabilities were detected in either frontend or backend dependencies at the time of testing.
 
 ```text
 found 0 vulnerabilities
 ```
 
-#### Frontend Audit
+**Mitigation:**
 
-```bash
-npm audit
-```
+* Dependency versions are locked through committed `package-lock.json` files.
+* Regular vulnerability scanning is performed using `npm audit`.
+* Safe dependency updates can be applied using `npm audit fix`.
 
-Result:
+**Result:** PASS
 
-```text
-found 0 vulnerabilities
-```
-
-**Finding**
-
-No known vulnerable packages were detected in either dependency tree during testing.
-
-**Status:** PASS
-
----
 
 ### A07 — Identification & Authentication Failures (Rate Limiting)
 
@@ -529,6 +524,36 @@ Dependency lock files are tracked by Git and protected from accidental omission.
 **Overall Status:** PASS ✅
 
 
+### A09 — Security Logging & Monitoring Failures
+
+**Test:**
+
+* Uploaded valid CSV log files and verified request logging.
+* Attempted invalid file upload (.txt); frontend validation blocked the request before submission.
+* Triggered rate limiting using Burp Suite Intruder and verified blocked requests.
+* Confirmed persistent log storage through `backend/logs/access.log`.
+
+**Finding:**
+All API requests are recorded with timestamp, source IP address, HTTP method, endpoint, response status, and response time. Security-relevant events such as successful analyses, validation failures, and rate-limited requests can be monitored and investigated through server logs.
+
+**Mitigation:**
+
+* Morgan middleware provides structured request logging.
+* Logs are written to a persistent `access.log` file.
+* Rate-limited requests generate HTTP 429 responses and are recorded for monitoring.
+* Request metadata includes timestamp, IP address, endpoint, status code, and response duration.
+* Client-side validation prevents invalid file uploads before they reach the backend.
+
+**Evidence:**
+
+```text
+2026-06-14T11:49:21.744Z | ::1 | POST /api/analyze | 200 | 4054.523 ms
+```
+
+**Result:** PASS
+
+
+
 ### Security Testing Tools Used
 
 * Chrome DevTools
@@ -550,6 +575,6 @@ Dependency lock files are tracked by Git and protected from accidental omission.
 | A06 Vulnerable and outdated Components           | PASS   |
 | A07 Authentication and Rate Limiting Failures    | PASS   |
 | A08 Software and data integrity Failures         | PASS   |
-
+| A09 Security Logging & Monitoring Failures       | PASS   |
 **Security Score:** 8 / 8 Tests Passed
 

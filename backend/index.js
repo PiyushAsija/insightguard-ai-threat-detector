@@ -1,19 +1,49 @@
 const express = require("express");
+const fs = require("fs");
+const path = require("path");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const multer = require("multer");
 const Papa = require("papaparse");
 const Groq = require("groq-sdk");
+const morgan = require("morgan");
 require("dotenv").config();
 
 const app = express();
+
+const logsDir = path.join(__dirname, "logs");
+
+if (!fs.existsSync(logsDir)) {
+  fs.mkdirSync(logsDir);
+}
+
+const accessLogStream = fs.createWriteStream(
+  path.join(logsDir, "access.log"),
+  { flags: "a" }
+);
+
+// Write logs to file
+app.use(
+  morgan(
+    ":date[iso] | :remote-addr | :method :url | :status | :response-time ms",
+    { stream: accessLogStream }
+  )
+);
+
+// Show logs in terminal
+app.use(
+  morgan(
+    ":date[iso] | :remote-addr | :method :url | :status | :response-time ms"
+  )
+);
+
 const PORT = process.env.PORT || 3001;
 const IS_DEV = process.env.NODE_ENV !== "production";
-
 // ─── Security Middleware ──────────────────────────────────────────────────────
 
 const ALLOWED_ORIGINS = [
+
   "http://localhost:5173",
   "https://insightguard-ai-threat-detector.vercel.app",
 ];
