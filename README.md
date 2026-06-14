@@ -170,7 +170,7 @@ This application was tested against OWASP Top 10 security risks using manual tes
 
 **Result**
 
-* No unauthorized access to protected resources was observed.
+* The API endpoint is intentionally public for this MVP and does not expose privileged functionality or administrative resources.
 * API functionality is intentionally public for the MVP use case.
 
 **Mitigations**
@@ -435,6 +435,18 @@ const limiter = rateLimit({
   max: 20
 });
 
+**Mitigation**
+
+Implemented using:
+
+```javascript
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20
+});
+
+**Status:** PASS
+
 
 ### A08 — Software and Data Integrity Failures
 
@@ -613,6 +625,6 @@ No outbound HTTP requests were generated.
 | A07 Authentication and Rate Limiting Failures    | PASS   |
 | A08 Software and data integrity Failures         | PASS   |
 | A09 Security Logging & Monitoring Failures       | PASS   |
-| A09 Server-Side Request Forgery (SSRF)           | PASS   |
-**Security Score:** 8 / 8 Tests Passed
+| A10 Server-Side Request Forgery (SSRF)           | PASS   |
+**Security Score:** 10 / 10 Tests Passed
 
